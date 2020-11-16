@@ -26,9 +26,9 @@ summary(food_consumption)
 
 #Create new Vegan or no Vegan variable
 
-food_consumption$vegan <- ifelse(food_consumption$food_category %in% c("Beef", "Eggs", "Fish",
+food_consumption$animal_product <- ifelse(food_consumption$food_category %in% c("Beef", "Eggs", "Fish",
                                                                        "Lamb & Goat", "Milk - inc. cheese",
-                                                                       "Pork", "Poultry"), "No Vegan", "Vegan")
+                                                                       "Pork", "Poultry"), "Yes", "No")
 
 
 # food consumption in Chile
@@ -36,33 +36,34 @@ food_consumption$vegan <- ifelse(food_consumption$food_category %in% c("Beef", "
 food_consumption %>% filter(country == "Chile") 
 
 ggplot(data =food_consumption %>% filter(country == "Chile"), 
-       aes(x = food_category, y = co2_emmission, fill = vegan)) + 
+       aes(x = food_category, y = co2_emmission, fill = animal_product)) + 
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   scale_y_continuous(labels = comma) +
   xlab("Food type") + ylab("Carbon footprint (kg)") +
-  ggtitle("Carbon footprint (per person / per year)")
+  ggtitle("Chile carbon footprint (per person / per year)") + labs(fill = "Animal product")
 
 
 
 ggplot(data =food_consumption %>% filter(country == "Chile"), 
-       aes(x = food_category, y = consumption, fill = vegan)) + 
+       aes(x = food_category, y = consumption, fill = animal_product)) + 
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   scale_y_continuous(labels = comma) +
   xlab("Food type") + ylab("Kg food)") +
-  ggtitle("Food consumption (per person / per year)")
+  ggtitle("Chile food consumption (per person / per year)") + 
+  labs(fill = "Animal product")
 
 
-# non vegan minus vegan total. 
+# Animal products minus non animal products total. 
 
-chilenovegan <- food_consumption %>% filter(country == "Chile", vegan == "No Vegan") 
-chilenovegansum <- sum(chilenovegan$co2_emmission)
+chileAnimalProducts <- food_consumption %>% filter(country == "Chile", animal_product == "Yes") 
+chileAnimalProductsSum <- sum(chileAnimalProducts$co2_emmission)
 
-chilevegan <- food_consumption %>% filter(country == "Chile", vegan == "Vegan")
-chilevegansum <- sum(chilevegan$co2_emmission)
+chileNoAnimalProducts <- food_consumption %>% filter(country == "Chile", animal_product == "No")
+chileNoAnimalProductsSum <- sum(chileNoAnimalProducts$co2_emmission)
 
-potential_saving_total <- chilenovegansum - chilevegansum
+potential_saving_total <- chileAnimalProductsSum - chileNoAnimalProductsSum
 
 potential_saving_total
 
